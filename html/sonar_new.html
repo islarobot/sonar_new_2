@@ -31,7 +31,7 @@
         		largo_texto:radio*0.0166666,
         		delta_negativos:radio*0.0133333,
         		resolucion:10,
-        		num_valores_delay:100, 
+        		num_valores_delay:200, 
         		resolucion_grados:0.5, 
         		speed_update:100,
         		max_amplitude_signal:100
@@ -256,7 +256,7 @@
 	 			//generateOutputs(socket,min,max,speed)
 	 			 
 	 			
-	 			  var msg_out = {inputParam:values_items.param_in,inputAngle:i,inputDirection:direccion}
+	 			  var msg_out = {inputParam:values_items.param_in,inputAngle:i}
 	 			  
 	 			  angle_given_moment = i;
 	 			  direction_given:_moment = direccion;
@@ -303,7 +303,7 @@
 					var param_received = msg_in.inputParam;
 					
 					var angle_int = parseInt(msg_in.inputAngle);
-					//var angle_int = angle_given_moment;
+					var angle_int = angle_given_moment;
 					
 											//console.log('--0--:'+msg_in.inputAngle);
 					
@@ -327,7 +327,7 @@
 
 						
 						var direccion1 = msg_in.inputDirection;
-						//var direccion1 = directition_given_moment;
+						var direccion1 = direction_given_moment;
 
 						
 						var valor = parseFloat(msg_in.outputValue).toFixed(2);

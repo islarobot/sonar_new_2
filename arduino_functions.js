@@ -55,9 +55,9 @@ var angle_float = 10*parseFloat(angle_string);
 var sign1 ='';
 
 if (angle_float<0) {
-	sign1 = 0;
+	sign1 = 'p';
 }else {
-	sign1 = 1;
+	sign1 = 'n';
 }
 
 
@@ -68,7 +68,7 @@ var angle_out = zeroFill(angle_float_abs,4);
 
 //console.log(angle_out);
 
-var output = param_string+sign1+angle_out+data_object.inputDirection;
+var output = param_string+sign1+angle_out;
 
 //console.log(output);
 
@@ -86,19 +86,15 @@ funcion_conversion_ardu_node: function(datos)
 
 var param = datos.substr(0,1);
 
-var signo = datos.substr(1,1);
-var angulo = datos.substr(2,4);
+var valor = datos.substr(1,3);
 
-var ang_int = parseFloat(angulo)/10;
-if (signo == '0') {ang_int = ang_int * (-1.0);}
-
-var direccion = datos.substr(6,1);
-var valor = datos.substr(7,4);
-
-var output = {inputParam:param,inputAngle:ang_int,inputDirection:direccion,outputValue:valor};
+var output = {outputParam:param,outputValue:valor};
 
 var output_JSON = JSON.stringify(output);
-if (datos.length != 12) {
+
+//console.log(datos.length)
+
+if (datos.length != 6) {
 	
 var output_JSON = 'NA';
 }

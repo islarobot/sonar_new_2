@@ -70,7 +70,7 @@ sp.on("data", function(data) {
 			//console.log(data_out_2);
 	}
   	 //console.log("---> 6 ---->  " + data_string);
-    //console.log("---> 6 ---->  " + data_json);
+    console.log("---> 6 ---->  " + data_json);
     //ipc.of.world.emit('message',data_out_2);
                
 });
