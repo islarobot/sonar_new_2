@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Project Sonar</title>
+		<script src="http://localhost:8080/socket.io/socket.io.js"></script>    
+        <script type="text/javascript" src="sonar_new.js"></script>
+
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script> 
+        
+        <script>
+        
+        var values_items = {
+        	
+        		min:270, 
+        		max:90, 
+        		param_in:"A", 
+        		state:"set", 
+        		speed_transmision:100,
+        		min_value:0, 
+        		max_value:10,        		
+        		x_circum:1000,
+        		y_circum:980,
+        		w_square:2000,
+        		h_square:2000,
+        		radius_circum:900,
+        		largo_pata:10,
+        		largo_texto:15,
+        		delta_negativos:12,
+        		resolucion:10,
+        		num_valores_delay:90, 
+        		resolucion_grados:3, 
+        		speed_update:100
+        		
+        		}
+			   
+			   
+        
+        
+        </script>
+    </head>
+    
+        <style>
+    
+    	.classProgress {
+    	width: 100%;
+    	background-color: grey;
+		}
+		.classBar {
+    	width: 0px;
+    	height: 30px;
+    	background-color: green;
+}
+    
+    </style>
+	<script type="text/javascript">
+		//parametros
+	var start = true;
+	var i = 0;	
+	var mode = 'auto';
+	function start_1() {
+		start = true;
+		i = 0;
+	}
+	function stop() {
+		start = false;
+		i = 0;
+	}
+	function set_values() {
+		
+				values_items.min = parseInt(document.getElementById('min').value);
+				values_items.max = parseInt(document.getElementById('max').value);
+				values_items.resolucion_grados = parseInt(document.getElementById('resolution').value);
+				values_items.speed_transmision = parseInt(document.getElementById('speed').value);
+				
+				clearInterval(myTimer);
+				myTimer = setInterval(interval_send, values_items.speed_transmision);
+		
+		
+				min = circumB2circumA(values_items.min);
+				max = values_items.max;
+		
+	}
+	
+	function onload_body() {
+	
+				document.getElementById('min').value = values_items.min;
+				document.getElementById('max').value = values_items.max;
+				document.getElementById('resolution').value = values_items.resolucion_grados;
+				document.getElementById('speed').value = values_items.speed_transmision;
+		
+	
+		
+	}
+	
+	function mode_change(){
+	
+	if (mode == 'auto') {
+		
+		document.getElementById('mode_button').innerHTML = "Manual";
+		mode = 'manual';	
+		clearInterval(myTimer);
+		
+		
+	}else {
+		document.getElementById('mode_button').innerHTML = "Auto";
+		mode = 'auto';	
+		myTimer = setInterval(interval_send, values_items.speed_transmision);
+	}	
+	
+	
+	}
+	
+	</script>    
+    
+    <body onload="onload_body()">
+    
+   <table border="1" width = "100%" height = "1000">
+		<tr>
+		<td width="8%" valign="top">
+		
+		<table border="1" width = "100%">
+		<tr>
+		<td>
+		
+		<br>
+		Min Angle:&nbsp;<label id="labelmin"></label><input type="text" id="min" size="3">
+		 
+		</td>
+		</tr>
+		<tr>
+		<td>
+
+		<br>
+		Max Angle:&nbsp;<label id="labelmax"></label><input type="text" id="max" size="3">
+		 
+		</td>
+		</tr>
+		
+		
+		<tr>
+		<td>
+
+		<br>
+		Resolucion grados:&nbsp;<label id="labelfreq"></label><input type="text" id="resolution" size="3">
+	
+		</td>
+		</tr>
+		<tr>
+		<td>
+
+		<br>
+		Tiempo de actualizacion:&nbsp;<label id="labelspeed"></label><input type="text" id="speed" size="3">
+		
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<button onclick="javascript:set_values()" id="setvalues_button">Set Values</button>
+		
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<button onclick="javascript:start_1()" id="start_button">Start</button>
+		
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<button onclick="javascript:stop()" id="stop_button">Stop</button>
+		
+		</td>
+		</tr>
+		<tr>
+		<td>
+		
+			<button onclick="javascript:mode_change()" id="mode_button">Auto</button>
+
+			</td>				
+		</tr>
+	
+		
+		 </table>
+		
+		</td>
+		
+		<td valign="top" align="center">
+		
+					<canvas style="border:1px solid #000000;" id="myCanvas" ></canvas>			
+		
+		</td>				
+		</tr>
+
+   
+   
+   
+   </table>
+
+    </body>
+    
+	<script type="text/javascript">
+	
+
+	
+	var canvas = document.getElementById('myCanvas');
+
+
+		
+        	
+        	
+        		
+			var stream = new Array();
+			var stream_angles = new Array();        		        		
+        		
+			canvas.width  = values_items.w_square;
+	canvas.height = values_items.h_square;;
+	var ctx = canvas.getContext('2d');	
+		      //funcion que setea los camposdel formulario (texto y botones)
+		        
+        //hide_fields_show_values_sonar(values_items);  
+        
+        		var last_angle = 0;
+       
+            var socket = io.connect("localhost:8080"); 
+            /*Initializing the connection with the server via websockets */
+            
+				//envío ángulos al arduino!!!
+				var min = circumB2circumA(values_items.min);
+				var max = values_items.max;
+				//var speed = 1.75
+				//var freq = 0		
+				//var juan = 0	
+				
+				// i es la iteracion del angulo
+
+				
+				//dir es la direccion
+				
+				var direccion = 'r';
+
+            // pintar canvas básico.
+            
+            	//draw_car(ctx,values_items);
+				
+				
+				canvas.addEventListener("click", function (e) { getCursorPosition(canvas, e,values_items,socket,mode);});
+				
+				function interval_send(){ 
+	 
+				 //test_radar();
+	 			//generateOutputs(socket,min,max,speed)
+	 			 
+	 			
+	 			  var msg_out = {mode:"data",inputParam:values_items.param_in,inputAngle:i,inputDirection:direccion}
+	 			  var msg_json = JSON.stringify(msg_out);
+	 			  if (start == true) {
+	 			  socket.emit('event', msg_json);	
+	 			  }
+	 			  
+	 			  //console.log('--0--'+msg_out.inputAngle)
+  					
+  					if (i>=max) {direccion = 'l';}
+  					if (i<=min) {direccion = 'r';}
+  					
+  					//cambio de direccion cuando llego al min y al max.
+  					
+  					if (direccion=='r') {
+  					i = i + values_items.resolucion_grados;
+  					}else {
+  						i = i - values_items.resolucion_grados;
+  					}
+  						//speed_transmision es la velocidad a la que envio los angulos al ardu en ms.
+  					
+	 				} 		            
+            
+					var myTimer = setInterval(interval_send, values_items.speed_transmision);            
+            
+            
+				//recibo mensajes del servidor!!!            
+				draw_basic_lines(ctx,values_items);
+            
+            socket.on("stream",function(message){  
+               
+					//console.log('---> 8 ----> '+message)
+	
+
+
+                msg_in = JSON.parse(message);
+                
+
+					
+					//filtro por parámetro
+					
+					var param_received = msg_in.inputParam;	
+					
+											//console.log('--0--:'+msg_in.inputAngle);
+					
+					var diferencia_abs = Math.abs(last_angle - msg_in.inputAngle);					
+					
+					
+					
+									
+					
+					if (param_received == values_items.param_in && diferencia_abs < 2*values_items.resolucion_grados) {
+					
+						last_angle = msg_in.inputAngle;
+						
+						
+					
+						var angle1 = circumA2circumB(msg_in.inputAngle);
+						
+												
+
+						
+
+						
+						var direccion1 = msg_in.inputDirection;
+						
+						var valor = msg_in.outputValue.toFixed(2);
+						var repeated = 2;
+
+						var tres_valores = {angle:angle1,direccion:direccion1,valor:valor,repeated:repeated};
+						stream.push(tres_valores);
+						stream_angles.push(angle1);
+												
+
+						//console.log(stream);
+						if (stream.length > values_items.num_valores_delay) {
+							stream.shift();
+							stream_angles.shift();
+						}
+							
+						//console.log(stream.length);
+						
+
+					
+					draw_variable_lines(ctx,stream,stream_angles,values_items,angle1);
+
+					document.getElementById("content").innerHTML = angle1;
+					
+
+					
+					document.getElementById("content1").innerHTML = message.value_number;					
+					
+					//drawmarcas_sonar('myCanvas', 1000, 980, 2000, 1050, values_items, 900, 10, 15, 12, 10, angle1, direccion1,contact_array,valor);
+			
+					
+					}
+					});
+					
+
+            
+
+ 
+ 				
+ 				//drawmarcas_sonar('myCanvas', 1000, 980, 2000, 1050, values_items, 900, 10, 15, 12, 10);
+ 				
+ 				//var test_angle_counter = 0;
+ 				
+ 				
+ 				
+ 				
+ 				
+	</script>    
+    
+</html>

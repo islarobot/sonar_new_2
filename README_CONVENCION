@@ -1,0 +1,36 @@
+/// README -- CONVENCION JSON MENSAJES
+
+
+MENSAJES DE CONTROL
+
+MENSAJES DE DATOS
+
+
+{
+mode: control,
+value: 'string'
+
+}
+
+
+{
+mode: data,
+inputParam: 'A',
+inputValue: 12,
+outputParam: 'A',
+outputValue: 1.222
+}
+
+
+
+///////chuleta
+
+https://www.w3schools.com/js/js_objects.asp
+
+objeto:
+var car = {type:"Fiat", model:"500", color:"white"};
+
+
+object to json
+
+var myJSON = JSON.stringify(obj);

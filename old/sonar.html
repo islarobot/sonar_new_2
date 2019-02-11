@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Project Sonar</title>
+		<script src="http://localhost:8080/socket.io/socket.io.js"></script>    
+        <script type="text/javascript" src="sonar.js"></script>
+
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script> 
+        
+        <script>
+        
+        
+			   
+			   
+        
+        
+        </script>
+    </head>
+    
+        <style>
+    
+    	.classProgress {
+    	width: 100%;
+    	background-color: grey;
+		}
+		.classBar {
+    	width: 0px;
+    	height: 30px;
+    	background-color: green;
+}
+    
+    </style>
+    
+    
+    <body>
+    
+   <table border="1" width = "100%" height = "1000">
+		<tr>
+		<td width="8%" valign="top">
+		
+		<table border="1" width = "100%">
+		<tr>
+		<td>
+		
+		<br>
+		Min Angle:&nbsp;<label id="labelmin"></label><input type="text" id="min" size="3" value="0">
+		 
+		</td>
+		</tr>
+		<tr>
+		<td>
+
+		<br>
+		Max Angle:&nbsp;<label id="labelmax"></label><input type="text" id="max" size="3" value="180">
+		 
+		</td>
+		</tr>
+		<tr>
+		<td>
+
+		<br>
+		Parameter:&nbsp;<label id="labelparam"></label><input type="text" id="param" size="3" value="A">
+		 
+		</td>
+		</tr>
+		<tr>
+		<td>
+
+		<br>
+		Angle:&nbsp;<label id="labelangle"></label><input type="text" id="angle" size="3" value="90">
+		 
+		</td>
+		</tr>
+		<tr>
+		<td>
+
+		<br>
+		Angular Speed:&nbsp;<label id="labelfreq"></label><input type="text" id="freq" size="3" value="10">
+	
+		</td>
+		</tr>
+		<tr>
+		<td>
+
+		<br>
+		Frequency:&nbsp;<label id="labelspeed"></label><input type="text" id="speed" size="3" value="10">
+		
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<button onclick="press_button_sonar(values_items)" id="setvalues_button">Set Values</button>
+		
+		</td>
+		</tr>
+		<tr>
+		<td>
+		
+
+<form>
+		<div id="content"></div> <!--This is where the data from the server is added-->
+ 				
+		</form>	
+			</td>				
+		</tr>
+		<tr>
+		<td>
+		
+		<form>
+		<div id="content1"></div> <!--This is where the data from the server is added-->
+ 				
+		</form>	
+		</td>				
+		</tr>
+		
+		 </table>
+		
+		</td>
+		
+		<td valign="top" align="center">
+		
+					<canvas style="border:1px solid #000000;" id="myCanvas" ></canvas>			
+		
+		</td>				
+		</tr>
+
+   
+   
+   
+   </table>
+
+    </body>
+    
+	<script type="text/javascript">
+	
+	//parametros
+	
+		var values_items = {
+        	
+        		angle:90, min:-90, max:90, param_in:"A", state:"set", speed_transmision:100
+        		
+        		}
+	
+		      //funcion que setea los campos del formulario (texto y botones)
+		        
+        hide_fields_show_values_sonar(values_items);  
+        
+			var lastvalue = -9999999;   
+			var lastvalue2 = '';
+			//var direction;
+			 
+			var o = 0; 
+			var last_dir = '';
+			var contact_array = {}			
+				
+        
+            var socket = io.connect("localhost:8080"); 
+            /*Initializing the connection with the server via websockets */
+            
+				//envío ángulos al arduino!!!
+				var min = values_items.min;
+				var max = values_items.max;
+				//var speed = 1.75
+				//var freq = 0		
+				//var juan = 0	
+				
+				// i es la iteracion del angulo
+				var i = 0;
+				
+				//dir es la direccion
+				
+				var direccion = 'r';
+
+				var contact_array;
+				
+				setInterval(function(){ 
+	 
+				 //test_radar();
+	 			//generateOutputs(socket,min,max,speed)
+	 			 
+	 			
+	 			  var msg_out = {mode:"data",inputParam:values_items.param_in,inputAngle:i,inputDirection:direccion}
+	 			  var msg_json = JSON.stringify(msg_out);
+	 			  socket.emit('event', msg_json);
+	 			  //console.log('---> 0 --->'+msg_json)
+  					
+  					if (i>max) {direccion = 'l';}
+  					if (i<min) {direccion = 'r';}
+  					
+  					//cambio de direccion cuando llego al min y al max.
+  					
+  					if (direccion=='r') {i++;}else {
+  						i--;
+  					}
+  						//speed_transmision es la velocidad a la que envio los angulos al ardu en ms.
+  					
+	 				}, values_items.speed_transmision); 		            
+            
+            
+				//recibo mensajes del servidor!!!            
+            socket.on("stream",function(message){  
+               
+						//console.log('---> 8 ----> '+message)
+
+					var contact_value = 0
+
+                msg_in = JSON.parse(message);
+                
+					//document.getElementById("content").innerHTML = message.value_number;
+					
+					//filtro por parámetro
+					var param_received = msg_in.inputParam;					
+					
+					if (param_received == values_items.param_in) {
+					
+					//console.log("hola")
+					
+						var angle1 = msg_in.inputAngle;
+						
+						//if (angle1 < 0) {angle1 = 2*angle1 - 720;}
+						
+					   console.log(angle1)						
+						
+						var direccion1 = msg_in.inputDirection;
+						
+						var valor = msg_in.outputValue;
+						
+						var longitud = values_items.max - values_items.min;
+						
+						if (contact_value != 0) {
+					
+						contact_array[''+angle_show] = 1;					
+						}
+						 
+						//console.log(angle1)
+						
+						//mapeo input a ángulos
+						var angle = (angle1 - values_items.min) * (values_items.angle * 2) / (values_items.max - values_items.min) - values_items.angle 
+						angle_show = parseFloat(angle).toFixed(2);
+						//console.log(angle)
+
+
+					document.getElementById("content").innerHTML = angle1 + ' - ' + angle_show;
+					
+					contact_value = message.value_number;
+					document.getElementById("content1").innerHTML = message.value_number;					
+					
+					drawmarcas_sonar('myCanvas', 1000, 980, 2000, 1050, values_items, 900, 10, 15, 12, 10, angle1, direccion1,contact_array,valor);
+			
+					
+					}
+						
+						if (angle1 > lastvalue) {
+							
+							direction = 'r';
+							
+							
+							
+						}else {
+							direction = 'l';
+							
+						}
+						
+						//console.log(direction)						
+						
+						if (direction != last_dir){
+						contact_array = {};
+
+						//alert(direction + ' - ' +  last_dir)
+						}						
+						
+						last_dir = direction;
+
+					var angle = (angle1 - values_items.min) * (values_items.angle * 2) / (values_items.max - values_items.min) - values_items.angle 
+					angle_show = parseFloat(angle).toFixed(2);				
+						
+					if (contact_value != 0) {
+					
+					contact_array[''+angle_show] = valor;					
+
+					}
+					
+					//console.log(angle + ' - ' + lastvalue2 + ' - ' + contact_array[''+angle_show])
+						
+					
+					
+					
+							
+					
+								
+				//	drawmarcas_sonar('myCanvas', 1000, 980, 2000, 1050, values_items, 900, 10, 15, 12, 10, angle, direction,contact_array,contact_value);
+					
+												
+									
+					
+					if (angle1 != lastvalue) {
+							
+							lastvalue = angle1;						
+							
+						} 
+                
+  
+
+
+            });
+            
+            $(function(){
+                $('#submit').click(function(){ /*listening to the button click using Jquery listener*/
+
+                    //var message_local = new classes.message_object('c6_clienteweb','c4_ardu','0','hola, ardu, soy clienteweb');
+                    var message_local = {
+ 							origin:"c6_clienteweb",
+ 							destination:"c4_ardu",
+ 							type:"0",
+ 							value_text:"hola ardu, soy clienteweb"
+                    }
+                    socket.send(JSON.stringify(message_local));
+
+ 
+                    $('#message').val('');
+                    //Emptying the text box value using jquery
+ 
+                });
+            });
+ 
+ 				
+ 				//drawmarcas_sonar('myCanvas', 1000, 980, 2000, 1050, values_items, 900, 10, 15, 12, 10);
+ 				
+ 				//var test_angle_counter = 0;
+ 				
+ 				
+ 				
+ 				
+ 				
+	</script>    
+    
+</html>

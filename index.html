@@ -1,0 +1,26 @@
+<script src="javascript_functions.js"></script>  
+
+
+<script src="http://localhost:8080/socket.io/socket.io.js"></script>    
+
+<script>  
+    var socket = io.connect('localhost:8080/');
+  
+  	i=-180;
+  
+  setInterval(function(){ 
+  socket.emit('event', { message: i });
+  console.log(i);
+  i++;
+  if (i==181) {i=-180;}
+  
+   }, 1000);
+
+
+    
+    
+
+    socket.on('announcements', function(data) {
+        console.log('Got announcement:', data.message);
+    });
+</script>
