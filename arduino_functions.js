@@ -9,6 +9,24 @@ function zeroFill( number, width )
   return number + ""; // always return a string
 }
 
+function regla_de_tres(input,min_in,max_in,min_out,max_out,exception) {
+
+var output = (input - min_in) * (max_out - min_out) / (max_in - min_in) + min_out;
+
+
+if (input == exception) {
+	output = 0;
+}
+
+if (output < 0) {
+	output = 0;
+}
+
+return parseInt(output);
+
+}
+
+
 module.exports = {
   generate_amplitude_function: function (datos) {
     
@@ -50,11 +68,11 @@ var param_string = data_object.inputParam;
 
 var angle_string = data_object.inputAngle;
 
-var angle_float = 10*parseFloat(angle_string);
+var angle_int = parseInt(angle_string);
 
 var sign1 ='';
 
-if (angle_float<0) {
+if (angle_int<0) {
 	sign1 = 'p';
 }else {
 	sign1 = 'n';
@@ -62,9 +80,9 @@ if (angle_float<0) {
 
 
 
-var angle_float_abs = Math.abs(angle_float);
+var angle_int_abs = Math.abs(angle_int);
 
-var angle_out = zeroFill(angle_float_abs,4);
+var angle_out = zeroFill(angle_int_abs,3);
 
 //console.log(angle_out);
 
@@ -79,22 +97,31 @@ return output;
 
 
 
-
-
 funcion_conversion_ardu_node: function(datos)
 {
 
+//console.log('Datos: '+datos);
+//console.log('Length: '+datos.length)
+
 var param = datos.substr(0,1);
 
-var valor = datos.substr(1,3);
+var valor = datos.substr(1,4);
 
-var output = {outputParam:param,outputValue:valor};
+var valor_int = parseInt(valor);
+
+var valor_int_escalado = regla_de_tres(valor_int,200,2000,0,100,9999);
+
+
+
+var output = {outputParam:param,outputValue:valor_int_escalado};
 
 var output_JSON = JSON.stringify(output);
 
-//console.log(datos.length)
+//console.log(valor_int);
 
-if (datos.length != 6) {
+//if (valor_int == 9999) {var output_JSON = 'NA';}
+
+if (datos.length != 7) {
 	
 var output_JSON = 'NA';
 }

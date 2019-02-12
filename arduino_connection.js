@@ -70,7 +70,7 @@ sp.on("data", function(data) {
 			//console.log(data_out_2);
 	}
   	 //console.log("---> 6 ---->  " + data_string);
-    console.log("---> 6 ---->  " + data_json);
+    //console.log("---> 6 ---->  " + data_json);
     //ipc.of.world.emit('message',data_out_2);
                
 });
@@ -96,7 +96,7 @@ var data_out = arduino_functions.funcion_conversion_node_ardu(data);
 if(arduino_connect){
 	
 	
-	console.log('node: '+data_out);
+	//console.log('node: '+data_out);
 	sp.write(data_out+'\n');
 	
 	}
