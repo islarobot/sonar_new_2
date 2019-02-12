@@ -281,13 +281,13 @@
             
             socket.on("stream",function(message){  
                
-					console.log('---> 8 ----> '+message)
+					//console.log('---> 8 ----> '+message)
 	
                 msg_in = JSON.parse(message);
                 					
 					var param_received = msg_in.inputParam;
 					
-					//console.log('--0--:'+msg_in.inputAngle);
+					console.log('--0--:'+msg_in.outputValue);
 											
 					valor_recibido = parseFloat(msg_in.outputValue).toFixed(2);
 

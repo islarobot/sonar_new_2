@@ -15,11 +15,11 @@ var output = (input - min_in) * (max_out - min_out) / (max_in - min_in) + min_ou
 
 
 if (input == exception) {
-	output = 0;
+	output = 100;
 }
 
 if (output < 0) {
-	output = 0;
+	output = 100;
 }
 
 return parseInt(output);

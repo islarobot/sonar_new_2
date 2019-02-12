@@ -222,18 +222,20 @@ function draw_variable_lines(id,stream,stream_angles,vl,a)
 			var color1 = 230;
 			
 
-			
+					//console.log('Angle1: '+stream[stream.length-1].angle);
 			for (jj=stream.length-1;jj>=0;jj--) {	
 
-		
+		//console.log('Angle1: '+stream[jj].angle);
 
 		ctx.beginPath();
 		var  alfaradf = stream[jj].angle * (Math.PI/180);
 		
+
+		
      	var af;
      	var bf;
-     	var a1f;
-     	var b1f;
+     	//var a1f;
+     	//var b1f;
      	
     
 
@@ -242,22 +244,22 @@ function draw_variable_lines(id,stream,stream_angles,vl,a)
 					
 			//console.log(af)					
 					
-			b1f = bf - Math.cos(alfaradf);
-			a1f = af + Math.sin(alfaradf);
+			//b1f = bf - Math.cos(alfaradf);
+			//a1f = af + Math.sin(alfaradf);
 				     
       ctx.moveTo(vl.x_circum, vl.y_circum);
       	
      
 if (!hasDuplicates(stream_angles)) {
       	
-      ctx.lineTo(a1f, b1f);
+      ctx.lineTo(af, bf);
       
    }
    //console.log(stream[jj].value); 
    if (hasDuplicates(stream_angles) && stream[jj].repeated == 0) {
       	//setTimeout(function(){ console.log("STOP") }, 30000);
 
-      ctx.lineTo(a1f, b1f);
+      ctx.lineTo(af, bf);
       
    }
  ctx.strokeStyle = rgbToHex(0,color2,0);
@@ -270,47 +272,52 @@ if (!hasDuplicates(stream_angles)) {
 		
 		
 		}
+		
+		//console.log('Angle2: '+stream[stream.length-1].angle);
 for (jj=stream.length-1;jj>=0;jj--) {	
-							ctx.beginPath();
-		
-		
-		
-		
 
-			
+		ctx.beginPath();
+		
+		
+				
 		var long_valor = vl.radius_circum * stream[jj].valor / vl.max_amplitude_signal;
 
 		var  alfaradf1 = (stream[jj].angle) * (Math.PI/180);
 		
-     	var af1;
-     	var bf1;
-     	var a1f1;
-     	var b1f1;
-     	
+		//console.log('Angle2: '+alfaradf1);
+		var af1;
+		var bf1;
+		var alf;
+		var blf;
+		
+     		bf1 = vl.y_circum - vl.radius_circum * Math.cos(alfaradf1);
+			af1 = vl.x_circum + vl.radius_circum * Math.sin(alfaradf1);
     
 
-			bf1 = vl.y_circum - long_valor * Math.cos(alfaradf1);
-			af1 = vl.x_circum + long_valor * Math.sin(alfaradf1);
+			blf = vl.y_circum - long_valor * Math.cos(alfaradf1);
+			alf = vl.x_circum + long_valor * Math.sin(alfaradf1);
 					
 			//console.log(af)					
 					
-			b1f1 = bf1 - Math.cos(alfaradf1);
-			a1f1 = af1 + Math.sin(alfaradf1);
+			//b1f1 = bf1 - Math.cos(alfaradf1);
+			//a1f1 = af1 + Math.sin(alfaradf1);
 				     
-      ctx.moveTo(vl.x_circum, vl.y_circum);
+      //ctx.moveTo(vl.x_circum, vl.y_circum);
    
+		ctx.moveTo(alf, blf);
 
+   
       	
 if (!hasDuplicates(stream_angles)) {
       	
-      ctx.lineTo(a1f1, b1f1);
+      ctx.lineTo(af1, bf1);
       
    }
    //console.log(stream[jj].value); 
    if (hasDuplicates(stream_angles) && stream[jj].repeated == 0) {
       	//setTimeout(function(){ console.log("STOP") }, 30000);
 
-      ctx.lineTo(a1f1, b1f1);
+      ctx.lineTo(af1, bf1);
       
    }
    	//console.log(color1)
